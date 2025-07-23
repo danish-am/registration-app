@@ -1,4 +1,7 @@
 FROM tomcat:latest
-RUN cp -R  /usr/local/tomcat/webapps.dist/*  /usr/local/tomcat/webapps
-COPY ./*.war /usr/local/tomcat/webapps
 
+# Optional: Clean existing default apps if needed
+RUN rm -rf /usr/local/tomcat/webapps/*
+
+# Copy the built WAR file from the Maven target directory
+COPY target/*.war /usr/local/tomcat/webapps/ROOT.war
