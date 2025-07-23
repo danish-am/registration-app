@@ -97,5 +97,22 @@ pipeline {
         }
       }
     }
+
+    stage("Trigger CD Pipeline") {
+      steps {
+        script {
+          withCredentials([string(credentialsId: 'jenkins-api-token', variable: 'JENKINS_API_TOKEN')]) {
+            sh """
+              curl -v -k -u danish:${JENKINS_API_TOKEN} \\
+              -X POST \\
+              -H 'cache-control: no-cache' \\
+              -H 'Content-Type: application/x-www-form-urlencoded' \\
+              --data-urlencode 'IMAGE_TAG=${IMAGE_TAG}' \\
+              'http://ec2-3-145-182-195.us-east-2.compute.amazonaws.com:8080/job/gitops-register-app-cd/buildWithParameters?token=gitops'
+            """
+          }
+        }
+      }
+    }
   }
 }
