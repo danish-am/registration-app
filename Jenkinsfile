@@ -60,7 +60,7 @@ pipeline {
     stage("Build and Push Docker Image") {
       steps {
         script {
-          withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER_CRED', passwordVariable: 'DOCKER_PASS_CRED')]) {
+          withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
 
             def dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
 
