@@ -12,7 +12,6 @@ pipeline {
     DOCKER_USER = "danish1729"
     IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
     IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
-    JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN")
   }
 
   stages {
@@ -102,9 +101,9 @@ pipeline {
     stage("Trigger CD Pipeline") {
       steps {
         script {
-          withCredentials([string(credentialsId: 'jenkins-api-token', variable: 'JENKINS_API_TOKEN')]) {
+          withCredentials([string(credentialsId: 'JENKINS_API_TOKEN', variable: 'API_TOKEN')]) {
             sh """
-              curl -v -k -u danish:${JENKINS_API_TOKEN} \\
+              curl -v -k -u danish:${API_TOKEN} \\
               -X POST \\
               -H 'cache-control: no-cache' \\
               -H 'Content-Type: application/x-www-form-urlencoded' \\
