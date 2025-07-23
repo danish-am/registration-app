@@ -4,4 +4,4 @@ FROM tomcat:latest
 RUN rm -rf /usr/local/tomcat/webapps/*
 
 # Copy the built WAR file from the Maven target directory
-COPY target/*.war /usr/local/tomcat/webapps/ROOT.war
+COPY webapp/target/*.war /usr/local/tomcat/webapps/ROOT.war
