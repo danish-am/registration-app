@@ -61,14 +61,39 @@ pipeline {
       steps {
         script {
           withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-
             def dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
 
             docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
               dockerImage.push("${IMAGE_TAG}")
-              dockerImage.push('latest')
+              dockerImage.push("latest")
             }
           }
+        }
+      }
+    }
+
+    stage("Trivy Scan") {
+      steps {
+        script {
+          sh """
+            docker run \
+              -v /var/run/docker.sock:/var/run/docker.sock \
+              aquasec/trivy image ${IMAGE_NAME}:latest \
+              --no-progress \
+              --scanners vuln \
+              --exit-code 0 \
+              --severity HIGH,CRITICAL \
+              --format table
+          """
+        }
+      }
+    }
+
+    stage("Cleanup Artifacts") {
+      steps {
+        script {
+          sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG} || true"
+          sh "docker rmi ${IMAGE_NAME}:latest || true"
         }
       }
     }
